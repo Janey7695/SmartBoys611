@@ -34,28 +34,27 @@
 #include "sdkconfig.h"
 
 #define LED 2
+#define IRDA_Pin 15
 static const char *TAG = "MQTT_EXAMPLE";
 static const char *subtopic = "/611/AirCondition";
+
+#define IRDA_Pin_LOW() gpio_set_level(IRDA_Pin,0)
+#define IRDA_Pin_HIGH() gpio_set_level(IRDA_Pin,1)
+#define Delay_us(x) vTaskDelay(x/portTICK_PERIOD_MS)
+#define Delay_ms(x) vTaskDelay(x/portTICK_PERIOD_MS)
+void IRDA_AirCondition_Open(void);
+
 
 static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
 {
     esp_mqtt_client_handle_t client = event->client;
     int msg_id;
-    // your_context_t *context = event->context;
     switch (event->event_id) {
         case MQTT_EVENT_CONNECTED:
             ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
-            // msg_id = esp_mqtt_client_publish(client, "/topic/qos1", "data_3", 0, 1, 0);
-            // ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
 
             msg_id = esp_mqtt_client_subscribe(client, subtopic, 0);
             ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
-
-            // msg_id = esp_mqtt_client_subscribe(client, "/topic/qos1", 1);
-            // ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
-
-            // msg_id = esp_mqtt_client_unsubscribe(client, "/topic/qos1");
-            // ESP_LOGI(TAG, "sent unsubscribe successful, msg_id=%d", msg_id);
             break;
         case MQTT_EVENT_DISCONNECTED:
             ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
@@ -79,6 +78,7 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
             if(event->data[0] == '1')
             {
                 gpio_set_level(LED,1);
+                IRDA_AirCondition_Open();
             }
             else if(event->data[0] == '0')
             {
@@ -105,30 +105,6 @@ static void mqtt_app_start(void)
     esp_mqtt_client_config_t mqtt_cfg = {
         .uri = "mqtt://mqtt2.janeymqtt.xyz",
     };
-#if CONFIG_BROKER_URL_FROM_STDIN
-    char line[128];
-
-    if (strcmp(mqtt_cfg.uri, "FROM_STDIN") == 0) {
-        int count = 0;
-        printf("Please enter url of mqtt broker\n");
-        while (count < 128) {
-            int c = fgetc(stdin);
-            if (c == '\n') {
-                line[count] = '\0';
-                break;
-            } else if (c > 0 && c < 127) {
-                line[count] = c;
-                ++count;
-            }
-            vTaskDelay(10 / portTICK_PERIOD_MS);
-        }
-        mqtt_cfg.uri = line;
-        printf("Broker url: %s\n", line);
-    } else {
-        ESP_LOGE(TAG, "Configuration mismatch: wrong broker url");
-        abort();
-    }
-#endif /* CONFIG_BROKER_URL_FROM_STDIN */
 
     esp_mqtt_client_handle_t client = esp_mqtt_client_init(&mqtt_cfg);
     esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqtt_event_handler, client);
@@ -153,13 +129,19 @@ void app_main()
     tcpip_adapter_init();
     ESP_ERROR_CHECK(esp_event_loop_create_default());
 
-    /* This helper function configures Wi-Fi or Ethernet, as selected in menuconfig.
-     * Read "Establishing Wi-Fi or Ethernet Connection" section in
-     * examples/protocols/README.md for more information about this function.
-     */
     ESP_ERROR_CHECK(example_connect());
     gpio_pad_select_gpio(LED);
     gpio_set_direction(LED,GPIO_MODE_OUTPUT);
-
+    gpio_pad_select_gpio(IRDA_Pin);
+    gpio_set_direction(IRDA_Pin,GPIO_MODE_OUTPUT);
     mqtt_app_start();
+}
+
+
+
+void IRDA_AirCondition_Open()
+{
+
+
+
 }
