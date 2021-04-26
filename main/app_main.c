@@ -137,48 +137,67 @@ void app_main()
     mqtt_app_start();
 }
 
+
+void khz38_low() //26us
+{
+	IRDA_Pin_HIGH();
+	Delay_us(13);
+	IRDA_Pin_LOW();
+	Delay_us(13);
+}
+
 void Start_Code()
 {
+	for(int i=0;i<347;i++)
+	{
+		khz38_low();
+	}
 	IRDA_Pin_LOW();
-	Delay_us(9000);
-	IRDA_Pin_HIGH();
-	Delay_us(4433);
+	Delay_us(4500);
 }
 
 void Connect_Code()
 {
+	for(int i=0;i<23;i++)
+	{
+		khz38_low();
+	}
 	IRDA_Pin_LOW();
-	Delay_us(728);
-	IRDA_Pin_HIGH();
-	Delay_us(19849);
+	Delay_us(20000);
 }
 
 void Finish_Code()
 {
+	for(int i=0;i<23;i++)
+	{
+		khz38_low();
+	}
 	IRDA_Pin_LOW();
-	Delay_us(663);
-	IRDA_Pin_HIGH();
 }
 
-void delay_690us()
-{
-    for(int i=0;i<12000;i++);
-}
+
 
 void Code_1()
 {
+	for(int i=0;i<23;i++)
+	{
+		khz38_low();
+	}
+	
 	IRDA_Pin_LOW();
-	Delay_us(690);
-	IRDA_Pin_HIGH();
-	Delay_us(1629);
+	Delay_us(1670);
 }
 
 void Code_0()
 {
+	
+	for(int i=0;i<23;i++)
+	{
+		khz38_low();
+	}
+	
 	IRDA_Pin_LOW();
-	Delay_us(666);
-	IRDA_Pin_HIGH();
-	Delay_us(509);
+	Delay_us(560);
 }
 
 void IRDA_AirCondition_Open()
@@ -209,7 +228,76 @@ void IRDA_AirCondition_Open()
 	Code_0();
 	Code_0();
 	Code_0();
+	Code_0();Start_Code();
+	Code_1();
 	Code_0();
+	Code_0();
+	Code_1();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_1();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_1();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_1();
+	Code_0();
+	Code_1();
+	Code_0();
+	Code_0();
+	Code_1();
+	Code_0();
+	Connect_Code();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_1();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_0();
+	Code_1();
+	Code_0();
+	Code_0();
+	Code_1();
+	Finish_Code();
 	Code_0();
 	Code_0();
 	Code_1();
