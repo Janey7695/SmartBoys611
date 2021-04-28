@@ -72,12 +72,12 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
             printf("DATA=%.*s\r\n", event->data_len, event->data);
             if(event->data[0] == '1')
             {
-                gpio_set_level(LED,1);
+                // gpio_set_level(LED,1);
                 IRDA_AirCondition_Open();
             }
             else if(event->data[0] == '0')
             {
-                gpio_set_level(LED,0);
+                // gpio_set_level(LED,0);
             }
             break;
         case MQTT_EVENT_ERROR:
