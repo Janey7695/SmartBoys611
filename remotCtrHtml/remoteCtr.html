@@ -14,9 +14,7 @@
             timeout = 5,
             keepAlive = 100,
             cleanSession = false,
-            ssl = false,
-            // userName = 'mao2080',  
-            // password = '123',  
+            ssl = false, 
             topic = '/611/AirCondition';
         client = new Paho.MQTT.Client(hostname, port, clientId);
         //建立客户端实例  
@@ -31,8 +29,6 @@
             keepAliveInterval: keepAlive,
             cleanSession: cleanSession,
             useSSL: ssl,
-            // userName: userName,  
-            // password: password,  
             onSuccess: onConnect,
             onFailure: function (e) {
                 console.log(e);
@@ -71,20 +67,18 @@
             console.log("收到消息:" + message.payloadString);
         }
 
-        function send1() {
+        function send_open() {
             var s = '1';
             if (s) {
-                // s = "(s)";
                 message = new Paho.MQTT.Message(s);
                 message.destinationName = topic;
                 client.send(message);
             }
         }
 
-        function send2() {
+        function send_close() {
             var s = '0';
             if (s) {
-                // s = "(s)";
                 message = new Paho.MQTT.Message(s);
                 message.destinationName = topic;
                 client.send(message);
@@ -93,21 +87,6 @@
 
         var count = 0;
 
-        function start() {
-            window.tester = window.setInterval(function () {
-                if (client.isConnected) {
-                    var s = "{time:" + new Date().Format("yyyy-MM-dd hh:mm:ss") + ", content:" + (count++) +
-                        ", from: web console}";
-                    message = new Paho.MQTT.Message(s);
-                    message.destinationName = topic;
-                    client.send(message);
-                }
-            }, 1000);
-        }
-
-        function stop() {
-            window.clearInterval(window.tester);
-        }
 
         Date.prototype.Format = function (fmt) { //author: meizz 
             var o = {
@@ -126,18 +105,19 @@
             return fmt;
         }
 		
-		
     </script>
 </head>
 
 <body>
-	<a href="#">Open</a>
-	<a href="#">Close</a>
+	<a id = "but1" href="#">Open</a>
+	<a id = "but2" href="#">Close</a>
+    <a id = "but3" href="#">Air Station</a>
 	<script type="text/javascript">
-				const buttons = document.querySelectorAll('a');
-				buttons.forEach(btn => {
-					btn.addEventListener('click',function(e){
-						send1();
+                const but_open = document.getElementById("but1");
+                const but_close = document.getElementById("but2");
+                const but_aircon = document.getElementById("but3");
+                but_open.addEventListener("click",function(e){
+                    send_open();
 						let x =e.clientX - e.target.offsetLeft;
 						let y =e.clientY - e.target.offsetTop;
 						
@@ -148,11 +128,24 @@
 						setTimeout(()=>{
 							ripples.remove()
 						},1000);
-					})
-				})
+                })
+                but_close.addEventListener("click",function(e){
+                    send_close();
+						let x =e.clientX - e.target.offsetLeft;
+						let y =e.clientY - e.target.offsetTop;
+						
+						let ripples = document.createElement('span');
+						ripples.style.left=x+'px';
+						ripples.style.top=y+'px';
+						this.appendChild(ripples);
+						setTimeout(()=>{
+							ripples.remove()
+						},1000);
+                })
+                but_aircon.addEventListener("click",function(e){
+                    
+                })
 			</script>
-    <!-- <input type="button" id = "but1" value="Open" onclick="send1()" />
-    <input type="button" id = "but2" value="Close" onclick="send2()" /> -->
 </body>
 
 </html>

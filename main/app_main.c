@@ -24,11 +24,13 @@
 
 #include "driver/gpio.h"
 #include "sdkconfig.h"
+#include "dht11.h"
 
 #define LED 2
 #define IRDA_Pin 15
 static const char *TAG = "MQTT";
 static const char *subtopic = "/611/AirCondition";
+unsigned char temp,humi;
 
 
 #define IRDA_Pin_LOW() gpio_set_level(IRDA_Pin,0)
@@ -36,6 +38,7 @@ static const char *subtopic = "/611/AirCondition";
 #define Delay_ms(x) vTaskDelay(x/portTICK_PERIOD_MS)
 #define Delay_us(x) ets_delay_us(x)
 void IRDA_AirCondition_Open(void);
+void Read_DHT11(void);
 
 
 
@@ -79,6 +82,14 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
             {
                 // gpio_set_level(LED,0);
             }
+			else if(event->data[0] == '2')
+			{
+				char mesgbuf[256];
+				sprintf(mesgbuf,"{\"temperature\":%2d,\"humidity\":%2d}",temp,humi);
+				Read_DHT11();
+				msg_id = esp_mqtt_client_publish(client, subtopic,mesgbuf, 0, 0, 0);
+            	ESP_LOGI(TAG, "sent publish successful, msg_id=%d", msg_id);
+			}
             break;
         case MQTT_EVENT_ERROR:
             ESP_LOGI(TAG, "MQTT_EVENT_ERROR");
@@ -134,7 +145,13 @@ void app_main()
     gpio_pullup_en(IRDA_Pin);
     gpio_set_pull_mode(IRDA_Pin,GPIO_PULLUP_ONLY);
     IRDA_Pin_HIGH();
+	DHT11_GPIO_Init();
     mqtt_app_start();
+}
+
+void Read_DHT11()
+{
+	DHT11_Read_Data(&temp,&humi);
 }
 
 
